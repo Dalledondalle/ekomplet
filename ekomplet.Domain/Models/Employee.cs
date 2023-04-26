@@ -93,6 +93,16 @@ namespace ekomplet.Domain.Models
             if(id != new Guid()) return true;
             return false;
         }
+
+        public static bool operator == (Employee e1, Employee e2)
+        {
+            return e1.id == e2.id;
+        }
+
+        public static bool operator !=(Employee e1, Employee e2)
+        {
+            return e1.id == e2.id;
+        }
     }
 
     public enum Role

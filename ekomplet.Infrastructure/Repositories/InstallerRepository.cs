@@ -34,145 +34,110 @@ namespace ekomplet.Infrastructure.Repositories
 
         public async Task<int> CreateInstallerAsync(Installer installer)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
 
-                using (var command = new SqlCommand("new_installer", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@firstname", installer.Firstname);
-                    command.Parameters.AddWithValue("@lastname", installer.Lastname);
-                    command.Parameters.AddWithValue("@phone", installer.Phone);
-                    command.Parameters.AddWithValue("@email", installer.Email);
-                    command.Parameters.AddWithValue("@supervisor_id", installer.SupervisorId.ToString());
+            using var command = new SqlCommand("new_installer", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@firstname", installer.Firstname);
+            command.Parameters.AddWithValue("@lastname", installer.Lastname);
+            command.Parameters.AddWithValue("@phone", installer.Phone);
+            command.Parameters.AddWithValue("@email", installer.Email);
+            command.Parameters.AddWithValue("@supervisor_id", installer.SupervisorId.ToString());
 
-                    return await command.ExecuteNonQueryAsync();
-                }
-            }
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<int> DeleteInstallerAsync(Guid id)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                using (var command = new SqlCommand("delete_installer", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", id);
-                    return await command.ExecuteNonQueryAsync();
-                }
-            }
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            using var command = new SqlCommand("delete_installer", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id", id);
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<int> DeleteInstallerAsync(Installer installer)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-
-                using (var command = new SqlCommand("delete_installer", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", installer.Id);
-
-                    return await command.ExecuteNonQueryAsync();
-                }
-            }
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            using var command = new SqlCommand("delete_installer", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id", installer.Id);
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<List<Installer>> GetAllInstallersAsync()
         {
             var installers = new List<Installer>();
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                var command = new SqlCommand(
-                    "SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id " +
-                    "FROM installers",
-                    connection);
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            var command = new SqlCommand(
+                "SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id " +
+                "FROM installers",
+                connection);
 
-                var reader = await command.ExecuteReaderAsync();
+            var reader = await command.ExecuteReaderAsync();
 
-                while (await reader.ReadAsync())
-                {
-                    installers.Add(new Installer(reader));
-                }
-            }
+            while (await reader.ReadAsync())
+                installers.Add(new Installer(reader));
 
             return installers;
         }
 
         public async Task<Installer> GetInstallerByEmailAsync(string email)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
 
-                using (SqlCommand command = new SqlCommand("get_installer_email", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@email", email);
+            await connection.OpenAsync();
 
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            return new(reader);
-                        }
-                    }
-                }
-            }
+            using var command = new SqlCommand("get_installer_email", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@email", email);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+                return new(reader);
 
             return new();
         }
 
         public async Task<Installer> GetInstallerByIdAsync(Guid id)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            using var command = new SqlCommand("get_installer_id", connection);
 
-                using (SqlCommand command = new SqlCommand("get_installer_id", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", id.ToString());
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id", id.ToString());
 
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            return new Installer(reader);
-                        }
-                    }
-                }
-            }
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+                return new Installer(reader);
 
             return new();
         }
 
         public async Task<Installer> GetInstallerByPhoneAsync(string phone)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
 
-                using (SqlCommand command = new SqlCommand("get_installer_phone", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@phone", phone);
+            await connection.OpenAsync();
 
-                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            return new Installer(reader);
-                        }
-                    }
-                }
-            }
+            using var command = new SqlCommand("get_installer_phone", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@phone", phone);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+                return new Installer(reader);
 
             return new();
         }
@@ -181,70 +146,55 @@ namespace ekomplet.Infrastructure.Repositories
         {
             var installers = new List<Installer>();
 
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
 
-                using (var command = new SqlCommand("get_installers_by_supervisors", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", supervisor.Id);
-                    var reader = await command.ExecuteReaderAsync();
+            using var command = new SqlCommand("get_installers_by_supervisors", connection);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id", supervisor.Id);
+            var reader = await command.ExecuteReaderAsync();
 
-                    while (await reader.ReadAsync())
-                    {
-                        installers.Add(new Installer(reader));
-
-                    }
-
-                }
-            }
+            while (await reader.ReadAsync())
+                installers.Add(new Installer(reader));
 
             return installers;
         }
 
         public async Task<int> RemoveSupervisorFromInstallerAsync(Installer installer, Supervisor supervisor)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
+            using var connection = new SqlConnection(connectionString);
 
-                using (var command = new SqlCommand("remove_supervisor_from_installer", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@installer_id", installer.Id);
-                    command.Parameters.AddWithValue("@supervisor_id", supervisor.Id);
+            await connection.OpenAsync();
 
-                    return await command.ExecuteNonQueryAsync();
-                }
-            }
+            using var command = new SqlCommand("remove_supervisor_from_installer", connection);
+
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@installer_id", installer.Id);
+            command.Parameters.AddWithValue("@supervisor_id", supervisor.Id);
+
+            return await command.ExecuteNonQueryAsync();
         }
 
         public async Task<int> UpdateInstallerAsync(Installer installer)
         {
-            using (var connection = new SqlConnection(connectionString))
-            {
-                await connection.OpenAsync();
-                int rowsAffected = 0;
-                using (var command = new SqlCommand("update_installer_email", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", installer.Id);
-                    command.Parameters.AddWithValue("@email", installer.Email);
+            using var connection = new SqlConnection(connectionString);
+            await connection.OpenAsync();
+            int rowsAffected = 0;
+            using var commandEmail = new SqlCommand("update_installer_email", connection);
+            commandEmail.CommandType = CommandType.StoredProcedure;
+            commandEmail.Parameters.AddWithValue("@id", installer.Id);
+            commandEmail.Parameters.AddWithValue("@email", installer.Email);
 
-                    rowsAffected += await command.ExecuteNonQueryAsync();
-                }
+            rowsAffected += await commandEmail.ExecuteNonQueryAsync();
 
-                using (var command = new SqlCommand("update_installer_phone", connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
-                    command.Parameters.AddWithValue("@id", installer.Id);
-                    command.Parameters.AddWithValue("@phone", installer.Phone);
 
-                    rowsAffected += await command.ExecuteNonQueryAsync();
-                }
-                return rowsAffected;
-            }
+            using var commandPhone = new SqlCommand("update_installer_phone", connection);
+            commandPhone.CommandType = CommandType.StoredProcedure;
+            commandPhone.Parameters.AddWithValue("@id", installer.Id);
+            commandPhone.Parameters.AddWithValue("@phone", installer.Phone);
+
+            rowsAffected += await commandPhone.ExecuteNonQueryAsync();
+            return rowsAffected;
         }
     }
 }
