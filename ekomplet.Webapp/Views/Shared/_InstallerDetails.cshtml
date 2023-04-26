@@ -1,0 +1,82 @@
+﻿@model ekomplet.services.Installer
+
+<div>
+    <h4>Installer</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.SupervisorId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.SupervisorId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Firstname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Firstname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Lastname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Lastname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Role)
+        </dd>
+    </dl>
+</div>
+<h3>Rapportere til</h3>
+<ul>
+    @foreach (var item in Model.Supervisors)
+    {
+        <li>
+            <div>
+                <p>@item.Firstname @item.Lastname<br />Tlf: @item.Phone<br />Email: @item.Email</p>
+                @if (Model.Supervisors.Count > 1)
+                {
+                    @Html.ActionLink("Fjern", "RemoveSupervisorFromInstaller", new { SupervisorId=@item.Id, InstallerId=@Model.Id }, new { onclick = $"return confirm('Er du sikker på du vil fjern {@item.Firstname} {@item.Lastname} fra {@Model.Firstname} {@Model.Lastname}?');" })
+                }
+            </div>
+        </li>
+
+    }
+</ul>
+
+@using (Html.BeginForm("AddInstaller", "Employees", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.Label("Supervisor", "Supervisors")
+        @Html.DropDownListFor(model => model.SupervisorId, new SelectList(ViewBag.supervisors, "Id", "NameMail"), "-- Vælg supervisor --", new { @class = "form-control" })
+        <input type="hidden" name="installerId" value="@Model.Id" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add</button>
+}
+
+<div>
+    @Html.ActionLink("Redigere", "EditInstaller", new { id=@Model.Id }) |
+    @Html.ActionLink("Slet", "DeleteInstaller", new { id=@Model.Id }, new { onclick = $"return confirm('Er du sikker på du vil slette {@Model.Firstname} {@Model.Lastname}?');" })
+</div>

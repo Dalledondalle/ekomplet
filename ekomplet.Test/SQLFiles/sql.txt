@@ -1,0 +1,715 @@
+﻿USE [master]
+GO
+/****** Object:  Database [ekomplet]    Script Date: 26-04-2023 13:42:20 ******/
+CREATE DATABASE [ekomplet]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'ekomplet', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\ekomplet.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'ekomplet_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL16.SQLEXPRESS\MSSQL\DATA\ekomplet_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [ekomplet] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [ekomplet].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [ekomplet] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [ekomplet] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [ekomplet] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [ekomplet] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [ekomplet] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [ekomplet] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [ekomplet] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [ekomplet] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [ekomplet] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [ekomplet] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [ekomplet] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [ekomplet] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [ekomplet] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [ekomplet] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [ekomplet] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [ekomplet] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [ekomplet] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [ekomplet] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [ekomplet] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [ekomplet] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [ekomplet] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [ekomplet] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [ekomplet] SET RECOVERY SIMPLE 
+GO
+ALTER DATABASE [ekomplet] SET  MULTI_USER 
+GO
+ALTER DATABASE [ekomplet] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [ekomplet] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [ekomplet] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [ekomplet] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [ekomplet] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [ekomplet] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+ALTER DATABASE [ekomplet] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [ekomplet] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [ekomplet]
+GO
+/****** Object:  Table [dbo].[installer_supervisor]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[installer_supervisor](
+	[installer_id] [varchar](36) NOT NULL,
+	[supervisor_id] [varchar](36) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[installer_id] ASC,
+	[supervisor_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[installers]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[installers](
+	[installer_id] [varchar](36) NOT NULL,
+	[firstname] [varchar](50) NOT NULL,
+	[lastname] [varchar](50) NOT NULL,
+	[phone_number] [varchar](20) NOT NULL,
+	[email] [varchar](80) NOT NULL,
+	[supervisor_id] [varchar](36) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[installer_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[supervisors]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[supervisors](
+	[supervisor_id] [varchar](36) NOT NULL,
+	[firstname] [varchar](50) NOT NULL,
+	[lastname] [varchar](50) NOT NULL,
+	[phone_number] [varchar](20) NOT NULL,
+	[email] [varchar](80) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[supervisor_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[installer_supervisor]  WITH CHECK ADD FOREIGN KEY([installer_id])
+REFERENCES [dbo].[installers] ([installer_id])
+GO
+ALTER TABLE [dbo].[installer_supervisor]  WITH CHECK ADD FOREIGN KEY([supervisor_id])
+REFERENCES [dbo].[supervisors] ([supervisor_id])
+GO
+ALTER TABLE [dbo].[installers]  WITH CHECK ADD FOREIGN KEY([supervisor_id])
+REFERENCES [dbo].[supervisors] ([supervisor_id])
+GO
+ALTER TABLE [dbo].[installers]  WITH CHECK ADD  CONSTRAINT [fk_supervisor_id] FOREIGN KEY([supervisor_id])
+REFERENCES [dbo].[supervisors] ([supervisor_id])
+ON UPDATE CASCADE
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[installers] CHECK CONSTRAINT [fk_supervisor_id]
+GO
+/****** Object:  StoredProcedure [dbo].[add_supervisor_to_installer]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[add_supervisor_to_installer] 
+	@supervisor_id VARCHAR(36),
+	@installer_id VARCHAR(36)
+AS
+BEGIN
+	INSERT INTO installer_supervisor (installer_id, supervisor_id)
+	VALUES (@installer_id, @supervisor_id);
+END
+GO
+/****** Object:  StoredProcedure [dbo].[delete_installer]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[delete_installer]
+	@id VARCHAR(36)	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;    
+
+	DELETE FROM installer_supervisor
+	WHERE installer_id = @id
+
+	DELETE FROM installers
+	WHERE installer_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[delete_supervisor]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[delete_supervisor]
+	@id VARCHAR(36)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    DELETE FROM supervisors
+	WHERE supervisor_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installer_email]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_installer_email]
+	@email VARCHAR(80)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id
+	FROM installers
+	WHERE email = @email
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installer_id]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_installer_id]
+	@id VARCHAR(36)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id
+	FROM installers
+	WHERE installer_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installer_phone]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_installer_phone]
+	@phone VARCHAR(20)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id
+	FROM installers
+	WHERE phone_number = @phone
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installers_by_supervisors]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_installers_by_supervisors] 
+	-- Add the parameters for the stored procedure here
+	@id VARCHAR(36)
+AS
+BEGIN
+	SELECT i.installer_id, i.firstname, i.lastname, i.phone_number, i.email, i.supervisor_id
+	FROM installers i
+	JOIN installer_supervisor isv ON i.installer_id = isv.installer_id
+	JOIN supervisors s ON isv.supervisor_id = s.supervisor_id
+	WHERE s.supervisor_id = @id;
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installers_firstname]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+
+CREATE PROCEDURE [dbo].[get_installers_firstname]
+	@name VARCHAR(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id
+	FROM installers
+	WHERE firstname = @name
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_installers_lastname]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+
+CREATE PROCEDURE [dbo].[get_installers_lastname]
+	@name VARCHAR(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT installer_id, firstname, lastname, phone_number, email, supervisor_id
+	FROM installers
+	WHERE lastname = @name
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisor_email]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisor_email]
+	@email VARCHAR(80)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT supervisor_id, firstname, lastname, phone_number, email
+	FROM supervisors
+	WHERE email = @email
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisor_id]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisor_id]
+	@id VARCHAR(36)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT supervisor_id, firstname, lastname, phone_number, email
+	FROM supervisors
+	WHERE supervisor_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisor_phone]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisor_phone]
+	@phone VARCHAR(20)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT supervisor_id, firstname, lastname, phone_number, email
+	FROM supervisors
+	WHERE phone_number = @phone
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisors_by_installers]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisors_by_installers]
+	@id VARCHAR(36)
+AS
+BEGIN
+	SELECT supervisors.supervisor_id, supervisors.firstname, supervisors.lastname, supervisors.phone_number, supervisors.email
+	FROM supervisors
+	JOIN installer_supervisor ON supervisors.supervisor_id = installer_supervisor.supervisor_id
+	WHERE installer_supervisor.installer_id = @id;
+
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisors_firstname]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisors_firstname]
+	@name VARCHAR(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT supervisor_id, firstname, lastname, phone_number, email
+	FROM supervisors
+	WHERE firstname = @name
+END
+GO
+/****** Object:  StoredProcedure [dbo].[get_supervisors_lastname]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[get_supervisors_lastname]
+	@name VARCHAR(50)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    SELECT supervisor_id, firstname, lastname, phone_number, email
+	FROM supervisors
+	WHERE lastname = @name
+END
+GO
+/****** Object:  StoredProcedure [dbo].[new_installer]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[new_installer]
+	@firstname VARCHAR(50),
+	@lastname VARCHAR(50),
+	@phone VARCHAR(20),
+	@email VARCHAR(80),
+	@supervisor_id VARCHAR(36)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    INSERT INTO installers (installer_id, firstname, lastname, phone_number, email, supervisor_id)
+VALUES 
+    (NEWID(), @firstname, @lastname, @phone, @email, @supervisor_id)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[new_installer2]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[new_installer2]
+	@firstname VARCHAR(50),
+	@lastname VARCHAR(50),
+	@phone VARCHAR(20),
+	@email VARCHAR(80),
+	@supervisor_id VARCHAR(36)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    INSERT INTO test (installer_id, firstname, lastname, phone_number, email, supervisor_id)
+VALUES 
+    (NEWID(), @firstname, @lastname, @phone, @email, @supervisor_id)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[new_supervisor]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[new_supervisor]
+	@firstname VARCHAR(50),
+	@lastname VARCHAR(50),
+	@phone VARCHAR(20),
+	@email VARCHAR(80)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    INSERT INTO supervisors (supervisor_id, firstname, lastname, phone_number, email)
+VALUES (NEWID(), @firstname, @lastname, @phone, @email)
+END
+GO
+/****** Object:  StoredProcedure [dbo].[remove_supervisor_from_installer]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[remove_supervisor_from_installer]
+    @installer_id VARCHAR(36),
+    @supervisor_id VARCHAR(36)
+AS
+BEGIN
+    -- Check if the installer and supervisor have a relation in the installer_supervisor table
+    IF NOT EXISTS (SELECT * FROM installer_supervisor WHERE installer_id = @installer_id AND supervisor_id = @supervisor_id)
+    BEGIN
+        RAISERROR ('There is no relation between the installer and supervisor in the installer_supervisor table', 16, 1)
+        RETURN;
+    END
+
+    -- Check if the supervisor is also in the installers table under supervisor_id
+    IF EXISTS (SELECT * FROM installers WHERE supervisor_id = @supervisor_id and installer_id = @installer_id)
+    BEGIN
+        DECLARE @new_supervisor_id VARCHAR(36)
+        
+        -- Get a new supervisor for the installer from the installer_supervisor table
+        SELECT TOP 1 @new_supervisor_id = supervisor_id 
+        FROM installer_supervisor 
+        WHERE installer_id = @installer_id AND supervisor_id != @supervisor_id
+
+        -- Check if there is a new supervisor available
+        IF @new_supervisor_id IS NULL
+        BEGIN
+            RAISERROR ('There is no other supervisor to assign to the installer', 16, 1)
+            RETURN;
+        END		
+
+        -- Update the supervisor_id for the installer in the installers table
+        UPDATE installers 
+        SET supervisor_id = @new_supervisor_id 
+        WHERE installer_id = @installer_id
+    END
+
+    -- Delete the relation from the installer_supervisor table
+    DELETE FROM installer_supervisor 
+    WHERE installer_id = @installer_id AND supervisor_id = @supervisor_id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[update_installer_email]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[update_installer_email]
+	@id VARCHAR(36),
+	@email VARCHAR(80)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE installers
+	SET email = @email
+	WHERE installer_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[update_installer_phone]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[update_installer_phone]
+	@id VARCHAR(36),
+	@phone VARCHAR(20)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE installers
+	SET phone_number = @phone
+	WHERE installer_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[update_supervisor_email]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[update_supervisor_email]
+	@id VARCHAR(36),
+	@email VARCHAR(80)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE supervisors
+	SET email = @email
+	WHERE supervisor_id = @id
+END
+GO
+/****** Object:  StoredProcedure [dbo].[update_supervisor_phone]    Script Date: 26-04-2023 13:42:20 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[update_supervisor_phone]
+	@id VARCHAR(36),
+	@phone VARCHAR(20)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE supervisors
+	SET phone_number = @phone
+	WHERE supervisor_id = @id
+END
+GO
+USE [master]
+GO
+ALTER DATABASE [ekomplet] SET  READ_WRITE 
+GO

@@ -1,0 +1,9 @@
+﻿@model ekomplet.services.Error
+@{
+    ViewData["Title"] = "Error";
+}
+<h1 class="text-danger">Ups. Der skete en fejl!</h1>
+@if (Model is not null)
+{
+    <h2 class="text-danger">@Model.Message</h2>
+}

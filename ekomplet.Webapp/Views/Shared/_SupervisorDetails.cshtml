@@ -1,0 +1,90 @@
+﻿@model ekomplet.services.Supervisor
+
+<div>
+    <h4>Supervisor</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Firstname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Firstname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Lastname)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Lastname)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Phone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Role)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Role)
+        </dd>
+    </dl>
+</div>
+<h3>Ansvarlig for</h3>
+<ul>
+    @foreach (var item in Model.Installers)
+    {
+        <li>
+            <div>
+                <p>@item.Firstname @item.Lastname<br />Tlf: @item.Phone<br />Email: @item.Email</p>
+                @Html.ActionLink("Fjern", "RemoveInstallerFromSupervisor", new { InstallerId=@item.Id, SupervisorId=@Model.Id }, new { onclick = $"return confirm('Er du sikker på du vil fjern {@item.Firstname} {@item.Lastname} fra {@Model.Firstname} {@Model.Lastname}?');" })
+            </div>
+        </li>
+
+    }
+</ul>
+
+@using (Html.BeginForm("AddInstaller", "Employees", FormMethod.Post))
+{
+    <div class="form-group">
+        @Html.Label("Installer", "Installatører")
+        @Html.DropDownListFor(model => model.InstallerId, new SelectList(ViewBag.installers, "Id", "NameMail"), "-- Vælg installatør--", new { @class = "form-control" })
+        <input type="hidden" name="supervisorId" value="@Model.Id" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add</button>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-2">
+            @Html.ActionLink("Redigere", "EditSupervisor", new { id=@Model.Id })
+        </div>
+        <div class="col-sm-1">
+            <p> | </p>
+        </div>
+        
+        <div class="col-sm-1">
+            @if (Model.Installers.Count() > 0)
+            {
+                <p class="delete-link" title="Ikke muligt. Fjern de personer, som denne person har ansvar for, først.">Slet</p>
+            }
+            else
+            {
+                @Html.ActionLink("Slet", "DeleteSupervisor", new { id=@Model.Id }, new { onclick = $"return confirm('Er du sikker på du vil slette {@Model.Firstname} {@Model.Lastname}?');" })
+            }
+        </div>
+    </div>
+</div>

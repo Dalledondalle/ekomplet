@@ -1,0 +1,72 @@
+﻿@model IEnumerable<ekomplet.services.Employee>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>View</h1>
+
+<p>
+    <a asp-action="CreateInstaller">Ny Installatør</a>
+</p>
+<p>
+    <a asp-action="CreateSupervisor">Ny Supervisor</a>
+</p>
+<div class="container">
+    <div class="row">
+        <div class="col-md-7">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Firstname)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Lastname)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Role)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-id="@item.Id">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Firstname)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Lastname)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Role)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-5" id="person-details">
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+<script>
+    $('tr[data-id]').click(function() {
+        var personId = $(this).data('id');
+        $('#person-details').load('/Employees/Details/' + personId);
+    });
+
+        $(function() {
+            $(".delete-link").on("click", function(event) {
+                event.preventDefault();
+                alert("Ikke muligt. Fjern de personer, som denne person har ansvar for, først.");
+            });
+        });
+</script>
+}
