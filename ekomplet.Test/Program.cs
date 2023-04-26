@@ -2,24 +2,6 @@
 using System.Linq;
 using System.Text;
 
-SupervisorService supervisorService = new("Server=localhost\\SQLEXPRESS;Database=ekomplet;Trusted_Connection=True;");
-InstallerService installerService = new("Server=localhost\\SQLEXPRESS;Database=ekomplet;Trusted_Connection=True;");
-
-var supervisors = CreateSupervisors(5).ToList();
-var installers = CreateInstallers(15).ToList();
-
-foreach (var supervisor in supervisors)
-{
-    await supervisorService.CreateSupervisor(supervisor);
-}
-
-supervisors = await supervisorService.GetAllSupervisor();
-
-foreach (var installer in installers)
-{
-    installer.SupervisorId = supervisors[new Random().Next(supervisors.Count())].Id;
-    await installerService.CreateInstaller(installer);
-}
 
 
 

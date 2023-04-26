@@ -2,7 +2,7 @@
 
 namespace ekomplet.services.Interfaces
 {
-    public interface ISupervisorRepository
+    public interface ISupervisorService
     {
         public Task<List<Supervisor>> GetAllSupervisorAsync();
         public Task<List<Supervisor>> GetSupervisorsByInstallerAsync(Installer installer);

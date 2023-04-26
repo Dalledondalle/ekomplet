@@ -1,4 +1,7 @@
 using ekomplet.services;
+using ekomplet.services.Interfaces;
+using ekomplet.services.Repositories;
+using ekomplet.services.Services;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Json;
@@ -7,19 +10,15 @@ using ILogger = Serilog.ILogger;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IInstallerRepository>(provider =>
-{
-    var configuration = provider.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("LocalSQL");
-    return new InstallerService(connectionString);
-});
 
-builder.Services.AddScoped<ISupervisorRepository>(provider =>
-{
-    var configuration = provider.GetRequiredService<IConfiguration>();
-    var connectionString = configuration.GetConnectionString("LocalSQL");
-    return new SupervisorService(connectionString);
-});
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+
+builder.Services.AddScoped<IInstallerRepository, InstallerRepository>();
+builder.Services.AddScoped<ISupervisorRepository, SupervisorRepository>();
+
+builder.Services.AddScoped<IInstallerService, InstallerService>();
+builder.Services.AddScoped<ISupervisorService, SupervisorService>();
+
 
 ILogger logger = new LoggerConfiguration()
     .Enrich.WithExceptionDetails()

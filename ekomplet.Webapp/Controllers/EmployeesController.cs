@@ -4,27 +4,29 @@ using ekomplet.services;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog;
+using ekomplet.services.Interfaces;
+using ekomplet.services.Models;
 
 namespace ekomplet.Webapp.Controllers
 {
     public class EmployeesController : Controller
     {
-        private readonly IInstallerRepository installerContext;
-        private readonly ISupervisorRepository supervisorContext;
+        private readonly IInstallerService installerService;
+        private readonly ISupervisorService supervisorService;
         private readonly ILogger<EmployeesController> logger;
 
-        public EmployeesController(IInstallerRepository installerContext, ISupervisorRepository supervisorContext, ILogger<EmployeesController> logger)
+        public EmployeesController(IInstallerService installerService, ISupervisorService supervisorService, ILogger<EmployeesController> logger)
         {
-            this.installerContext = installerContext;
-            this.supervisorContext = supervisorContext;
+            this.installerService = installerService;
+            this.supervisorService = supervisorService;
             this.logger = logger;
         }
         public async Task<ActionResult> Index()
         {
             try
             {
-                var installers = await installerContext.GetAllInstallers();
-                var supervisors = await supervisorContext.GetAllSupervisor();
+                var installers = await installerService.GetAllInstallersAsync();
+                var supervisors = await supervisorService.GetAllSupervisorAsync();
                 List<Employee> employees = installers.Cast<Employee>().Concat(supervisors.Cast<Employee>()).ToList();
                 return View(employees);
             }
@@ -38,20 +40,20 @@ namespace ekomplet.Webapp.Controllers
         public async Task<IActionResult> Details(Guid id)
         {
 
-            var supervisor = await supervisorContext.GetSupervisorById(id);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(id);
             if (supervisor.Exists())
             {
-                supervisor.Installers = await installerContext.GetInstallersBySupervisor(supervisor);
-                var installers = await installerContext.GetAllInstallers();
+                supervisor.Installers = await installerService.GetInstallersBySupervisorAsync(supervisor);
+                var installers = await installerService.GetAllInstallersAsync();
                 ViewBag.installers = installers;
                 return PartialView("_SupervisorDetails", supervisor);
             }
 
-            var installer = await installerContext.GetInstallerById(id);
+            var installer = await installerService.GetInstallerByIdAsync(id);
             if (installer.Exists())
             {
-                installer.Supervisors = await supervisorContext.GetSupervisorsByInstaller(installer);
-                var supervisors = await supervisorContext.GetAllSupervisor();
+                installer.Supervisors = await supervisorService.GetSupervisorsByInstallerAsync(installer);
+                var supervisors = await supervisorService.GetAllSupervisorAsync();
                 ViewBag.supervisors = supervisors;
                 return PartialView("_InstallerDetails", installer);
             }
@@ -62,18 +64,18 @@ namespace ekomplet.Webapp.Controllers
 
         public async Task<ActionResult> DeleteInstaller(Guid id)
         {
-            var installer = await installerContext.GetInstallerById(id);
+            var installer = await installerService.GetInstallerByIdAsync(id);
 
             if (!ValidEmployee(id, installer)) return NotFound();
 
-            await installerContext.DeleteInstaller(installer);
+            await installerService.DeleteInstallerAsync(installer);
             return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> DeleteSupervisor(Guid id)
         {
-            var supervisor = await supervisorContext.GetSupervisorById(id);
-            supervisor.Installers = await installerContext.GetInstallersBySupervisor(supervisor);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(id);
+            supervisor.Installers = await installerService.GetInstallersBySupervisorAsync(supervisor);
 
             if (!ValidEmployee(id, supervisor)) return View("_Error", Error.PersonNotFound());            
 
@@ -83,14 +85,14 @@ namespace ekomplet.Webapp.Controllers
                 return View("_Error", new Error($"Ups, ser ud til der stadig var nogle som {supervisor.Firstname} {supervisor.Lastname} havde ansvar for. Fjern alle som rapportere til {supervisor.Firstname} {supervisor.Lastname}"));
             }
 
-            await supervisorContext.DeleteSupervisor(supervisor);
+            await supervisorService.DeleteSupervisorAsync(supervisor);
 
             return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> CreateInstaller()
         {
-            var supervisors = await supervisorContext.GetAllSupervisor();
+            var supervisors = await supervisorService.GetAllSupervisorAsync();
 
             var supervisorsSelectList = new SelectList(supervisors, "Id", "NameMail");
 
@@ -106,7 +108,7 @@ namespace ekomplet.Webapp.Controllers
             try
             {
                 installer.Role = Role.Installer;
-                await installerContext.CreateInstaller(installer);
+                await installerService.CreateInstallerAsync(installer);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -128,7 +130,7 @@ namespace ekomplet.Webapp.Controllers
             try
             {
                 supervisor.Role = Role.Supervisor;
-                await supervisorContext.CreateSupervisor(supervisor);
+                await supervisorService.CreateSupervisorAsync(supervisor);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -140,7 +142,7 @@ namespace ekomplet.Webapp.Controllers
 
         public async Task<ActionResult> EditInstaller(Guid id)
         {
-            var installer = await installerContext.GetInstallerById(id);
+            var installer = await installerService.GetInstallerByIdAsync(id);
 
             if(!ValidEmployee(id, installer)) return NotFound();            
 
@@ -153,7 +155,7 @@ namespace ekomplet.Webapp.Controllers
         {
             try
             {
-                await installerContext.UpdateInstaller(installer);
+                await installerService.UpdateInstallerAsync(installer);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -165,7 +167,7 @@ namespace ekomplet.Webapp.Controllers
 
         public async Task<ActionResult> EditSupervisor(Guid id)
         {
-            var supervisor = await supervisorContext.GetSupervisorById(id);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(id);
 
             if(!ValidEmployee(id, supervisor)) return NotFound();            
 
@@ -178,7 +180,7 @@ namespace ekomplet.Webapp.Controllers
         {
             try
             {
-                await supervisorContext.UpdateSupervisor(supervisor);
+                await supervisorService.UpdateSupervisorAsync(supervisor);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -190,26 +192,26 @@ namespace ekomplet.Webapp.Controllers
 
         public async Task<ActionResult> RemoveSupervisorFromInstaller(Guid supervisorId, Guid installerId)
         {
-            var installer = await installerContext.GetInstallerById(installerId);
-            var supervisor = await supervisorContext.GetSupervisorById(supervisorId);
+            var installer = await installerService.GetInstallerByIdAsync(installerId);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(supervisorId);
 
             if (!ValidEmployee(installerId, installer, supervisorId, supervisor)) return NotFound();
 
-            await installerContext.RemoveSupervisorFromInstaller(installer, supervisor);
+            await installerService.RemoveSupervisorFromInstallerAsync(installer, supervisor);
 
             return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> RemoveInstallerFromSupervisor(Guid installerId, Guid supervisorId)
         {
-            var installer = await installerContext.GetInstallerById(installerId);
-            var supervisor = await supervisorContext.GetSupervisorById(supervisorId);
+            var installer = await installerService.GetInstallerByIdAsync(installerId);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(supervisorId);
 
             if (!ValidEmployee(installerId, installer, supervisorId, supervisor)) return NotFound();
 
             try
             {
-                await supervisorContext.RemoveInstallerFromSupervisor(supervisor, installer);
+                await supervisorService.RemoveInstallerFromSupervisorAsync(supervisor, installer);
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -223,14 +225,14 @@ namespace ekomplet.Webapp.Controllers
         [HttpPost]
         public async Task<ActionResult> AddInstaller(Guid supervisorId, Guid installerId)
         {
-            var installer = await installerContext.GetInstallerById(installerId);
-            var supervisor = await supervisorContext.GetSupervisorById(supervisorId);
+            var installer = await installerService.GetInstallerByIdAsync(installerId);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(supervisorId);
 
             if (!ValidEmployee(installerId, installer, supervisorId, supervisor)) return NotFound();
 
             try
             {
-                await installerContext.AddSupervisor(supervisor, installer);
+                await installerService.AddSupervisorAsync(supervisor, installer);
             }
             catch (Exception ex)
             {
@@ -249,14 +251,14 @@ namespace ekomplet.Webapp.Controllers
         [HttpPost]
         public async Task<ActionResult> AddSupervisor(Guid installerId, Guid supervisorId)
         {
-            var installer = await installerContext.GetInstallerById(installerId);
-            var supervisor = await supervisorContext.GetSupervisorById(supervisorId);
+            var installer = await installerService.GetInstallerByIdAsync(installerId);
+            var supervisor = await supervisorService.GetSupervisorByIdAsync(supervisorId);
 
             if(!ValidEmployee(installerId, installer, supervisorId, supervisor)) return NotFound();            
 
             try
             {
-                await installerContext.AddSupervisor(supervisor, installer);
+                await installerService.AddSupervisorAsync(supervisor, installer);
             }
             catch (Exception ex)
             {

@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ekomplet.services
+namespace ekomplet.services.Models
 {
+    
+
     public class Employee
     {
         private Guid id;

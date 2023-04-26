@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ekomplet.services
+namespace ekomplet.services.Models
 {
     public class Supervisor : Employee
     {
@@ -32,7 +32,6 @@ namespace ekomplet.services
         }
         public Supervisor(SqlDataReader reader)
         {
-
             Id = new Guid(reader.GetString(reader.GetOrdinal("supervisor_id")));
             Firstname = reader.GetString(reader.GetOrdinal("firstname"));
             Lastname = reader.GetString(reader.GetOrdinal("lastname"));
