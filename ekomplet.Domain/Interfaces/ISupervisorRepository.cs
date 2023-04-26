@@ -1,8 +1,8 @@
-﻿using ekomplet.services.Models;
+﻿using ekomplet.Domain.Models;
 
-namespace ekomplet.services.Interfaces
+namespace ekomplet.Domain.Interfaces
 {
-    public interface ISupervisorService
+    public interface ISupervisorRepository
     {
         public Task<List<Supervisor>> GetAllSupervisorAsync();
         public Task<List<Supervisor>> GetSupervisorsByInstallerAsync(Installer installer);

@@ -1,9 +1,9 @@
-﻿using ekomplet.services.Interfaces;
-using ekomplet.services.Models;
+﻿using ekomplet.Domain.Interfaces;
+using ekomplet.Domain.Models;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace ekomplet.services.Services
+namespace ekomplet.Application.Services
 {
     public class SupervisorService : ISupervisorService
     {

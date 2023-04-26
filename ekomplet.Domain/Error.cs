@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ekomplet.services
+namespace ekomplet.Domain
 {
     public class Error
     {

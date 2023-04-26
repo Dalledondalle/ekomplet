@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ekomplet.services.Models
+namespace ekomplet.Domain.Models
 {
     public class Supervisor : Employee
     {

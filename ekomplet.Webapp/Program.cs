@@ -1,7 +1,7 @@
-using ekomplet.services;
-using ekomplet.services.Interfaces;
-using ekomplet.services.Repositories;
-using ekomplet.services.Services;
+using ekomplet.Application.Services;
+using ekomplet.Domain;
+using ekomplet.Domain.Interfaces;
+using ekomplet.Infrastructure.Repositories;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Json;

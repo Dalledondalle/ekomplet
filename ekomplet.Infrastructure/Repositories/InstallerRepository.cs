@@ -1,5 +1,5 @@
-﻿using ekomplet.services.Interfaces;
-using ekomplet.services.Models;
+﻿using ekomplet.Domain.Interfaces;
+using ekomplet.Domain.Models;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ekomplet.services.Repositories
+namespace ekomplet.Infrastructure.Repositories
 {
     public class InstallerRepository : IInstallerRepository
     {

@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ekomplet.services\ekomplet.services.csproj" />
+    <ProjectReference Include="..\ekomplet.Application\ekomplet.Application.csproj" />
+    <ProjectReference Include="..\ekomplet.Domain\ekomplet.Domain.csproj" />
+    <ProjectReference Include="..\ekomplet.Infrastructure\ekomplet.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

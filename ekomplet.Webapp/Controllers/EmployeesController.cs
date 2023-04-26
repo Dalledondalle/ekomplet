@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ekomplet.services;
+using ekomplet.Domain;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog;
-using ekomplet.services.Interfaces;
-using ekomplet.services.Models;
+using ekomplet.Domain.Interfaces;
+using ekomplet.Domain.Models;
 
 namespace ekomplet.Webapp.Controllers
 {
